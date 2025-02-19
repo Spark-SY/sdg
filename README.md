@@ -1,2 +1,3 @@
-# template
-Template repo for new project
+# SDG System
+
+Synthetic Data Generator System
