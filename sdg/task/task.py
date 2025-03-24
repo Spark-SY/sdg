@@ -7,19 +7,10 @@ Typical usage example:
     final_dataset = task.final_dataset
 """
 
-from enum import Enum
 from uuid import UUID, uuid4
-from dataset import Dataset, DataType
+from task.task_type import TaskType
+from storage.dataset import Dataset, DataType
 from data_operator.operator import Operator
-
-
-class TaskType(Enum):
-    """Represents the type of task to be executed.
-    """
-    PREPROCESSING = 'preprocessing'
-    AUGMENTATION = 'augmentation'
-    EVALUATION = 'evaluation'
-
 
 class Task:
     """Represents a task that processes a dataset through a series of operators.

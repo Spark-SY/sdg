@@ -3,8 +3,9 @@
 
 from data_operator.operator import Operator, OperatorMeta
 import data_operator
-from dataset import Dataset, DataType
-from task import Task, TaskType
+from storage.dataset import Dataset, DataType
+from task.task_type import TaskType
+from task.task import Task
 import copy
 import shutil
 import pprint
@@ -27,7 +28,7 @@ def describe_operator(name):
     print('\n')
 
 
-if __name__ == '__main__':
+def poc():
     print('Preprocessing operator----------------------------------------------')
     preprocessing_operators = get_operators(DataType.PYTHON,
                                             TaskType.PREPROCESSING)
@@ -37,10 +38,6 @@ if __name__ == '__main__':
     augmentation_operators = get_operators(DataType.PYTHON,
                                            TaskType.AUGMENTATION)
     for operator_name in augmentation_operators:
-        describe_operator(operator_name)
-    print('Evaludatin operator----------------------------------------------')
-    evaluation_operators = get_operators(DataType.PYTHON, TaskType.EVALUATION)
-    for operator_name in evaluation_operators:
         describe_operator(operator_name)
     print('----------------------------------------------')
 
@@ -54,7 +51,7 @@ if __name__ == '__main__':
     sample_preprocessing_task.run()
     if sample_preprocessing_task.final_dataset is not None:
         shutil.move(sample_preprocessing_task.final_dataset.base_path,
-                    '/Users/hongbin/Workspace/sdg/data/sample-preprocessing')
+                    './data/sample-preprocessing')
 
     preprocessing_task = Task([registry['PythonFormattingOperator']()],
                               TaskType.PREPROCESSING, DataType.PYTHON,
@@ -62,7 +59,7 @@ if __name__ == '__main__':
     preprocessing_task.run()
     if preprocessing_task.final_dataset is not None:
         shutil.move(preprocessing_task.final_dataset.base_path,
-                    '/Users/hongbin/Workspace/sdg/data/preprocessing')
+                    './data/preprocessing')
 
     dataset = Dataset('preprocessing', DataType.PYTHON)
     augmentation_task = Task([
@@ -72,9 +69,7 @@ if __name__ == '__main__':
     augmentation_task.run()
     if augmentation_task.final_dataset is not None:
         shutil.move(augmentation_task.final_dataset.base_path,
-                    '/Users/hongbin/Workspace/sdg/data/augmentation')
+                    './data/augmentation')
 
-    dataset = Dataset('augmentation', DataType.PYTHON)
-    evaluation_task = Task([registry['PythonValidationOperator']()],
-                           TaskType.EVALUATION, DataType.PYTHON, dataset)
-    evaluation_task.run()
+if __name__ == '__main__':
+    poc()

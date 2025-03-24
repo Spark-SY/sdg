@@ -3,8 +3,8 @@
 
 from typing import override
 from data_operator.operator import Operator, Field
-from dataset import DataType
-from task import TaskType
+from storage.dataset import DataType
+from task.task_type import TaskType
 import black
 import ast
 import random

@@ -26,7 +26,7 @@ class Dataset:
         _index: An integer representing the index of the current file.
     """
 
-    root: str = '/data'
+    root: str = './data'
 
     def __init__(self, path: str, data_type: DataType):
         """Initializes the dataset with the given path and type.
