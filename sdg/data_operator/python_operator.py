@@ -1,13 +1,14 @@
 """ Operators for Python code processing.
 """
 
-from typing import override
-from data_operator.operator import Operator, Field
-from storage.dataset import DataType
-from task.task_type import TaskType
 import black
 import ast
 import random
+from typing import override
+
+from .operator import Operator, Field
+from ..storage.dataset import DataType
+from ..task.task_type import TaskType
 
 
 class PythonFormattingOperator(Operator):

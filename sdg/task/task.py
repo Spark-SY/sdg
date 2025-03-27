@@ -8,9 +8,11 @@ Typical usage example:
 """
 
 from uuid import UUID, uuid4
-from task.task_type import TaskType
-from storage.dataset import Dataset, DataType
-from data_operator.operator import Operator
+
+from .task_type import TaskType
+from ..storage.dataset import Dataset, DataType
+from ..data_operator.operator import Operator
+
 
 class Task:
     """Represents a task that processes a dataset through a series of operators.

@@ -35,8 +35,9 @@ Typical usage example:
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
-from storage.dataset import Dataset, DataType
-from task.task_type import TaskType
+
+from ..storage.dataset import Dataset, DataType
+from ..task.task_type import TaskType
 
 
 class OperatorMeta(type):

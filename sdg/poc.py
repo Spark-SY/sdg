@@ -1,14 +1,16 @@
 """PoC code to demonstrate the usage of the data_operator package.
 """
 
-from data_operator.operator import Operator, OperatorMeta
-import data_operator
-from storage.dataset import Dataset, DataType
-from task.task_type import TaskType
-from task.task import Task
 import copy
 import shutil
 import pprint
+
+from .data_operator.operator import Operator, OperatorMeta
+from . import data_operator
+from .storage.dataset import Dataset, DataType
+from .task.task_type import TaskType
+from .task.task import Task
+
 
 registry = OperatorMeta.get_registry()
 
