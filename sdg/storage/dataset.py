@@ -15,6 +15,12 @@ from ..config import settings
 class DataType(Enum):
     """Available data types."""
     PYTHON = 'python'
+    IMAGE = 'image'
+    AUDIO = 'audio'
+    TEXT = 'text'
+    VIDEO = 'video'
+    TABLE = 'table'
+    GRAPH = 'graph'
 
 
 class Dataset:
