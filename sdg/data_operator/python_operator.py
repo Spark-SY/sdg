@@ -6,6 +6,7 @@ import ast
 import random
 from typing import override
 
+from .operator import Meta
 from .operator import Operator, Field
 from ..storage.dataset import DataType
 from ..task.task_type import TaskType
@@ -50,6 +51,14 @@ class PythonFormattingOperator(Operator):
             Field('skip-magic-trailing-comma', Field.FieldType.BOOL,
                   'Don’t use trailing commas.', False)
         ]
+
+    @classmethod
+    @override
+    def get_meta(cls) -> Meta:
+        return Meta(
+            name='PythonFormattingOperator',
+            description='Formats Python code using the Black code formatter.'
+        )
 
     @override
     def execute(self, in_dataset, out_dataset) -> None:
@@ -98,6 +107,15 @@ class PythonReorderOperator(Operator):
             Field('reorder-classes', Field.FieldType.BOOL,
                   'Reorder classes in the code.', True)
         ]
+
+    @classmethod
+    @override
+    def get_meta(cls) -> Meta:
+        return Meta(
+            name='PythonReorderOperator',
+            description='Reorders the definitions of functions, imports, and '
+            'classes in Python code.'
+        )
 
     @override
     def execute(self, in_dataset, out_dataset) -> None:
@@ -263,6 +281,15 @@ class PythonDocstringInsertOperator(Operator):
             Field('function', Field.FieldType.BOOL,
                   'Insert docstring if function doc is missing.', True)
         ]
+
+    @classmethod
+    @override
+    def get_meta(cls) -> Meta:
+        return Meta(
+            name='PythonDocstringInsertOperator',
+            description='Inserts docstrings into Python code if they are '
+            'missing.'
+        )
 
     @override
     def execute(self, in_dataset, out_dataset):

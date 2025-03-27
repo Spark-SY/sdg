@@ -77,6 +77,17 @@ class Field():
     default: Any
 
 
+@dataclass
+class Meta():
+    """Metadata of the operator.
+    """
+
+    # Name of the operator.
+    name: str
+    # Description of the operator.
+    description: str
+
+
 class Operator(metaclass=OperatorMeta):
     """Operator is the base class for all operators.
     """
@@ -103,6 +114,16 @@ class Operator(metaclass=OperatorMeta):
         operator instance.
         """
         raise NotImplementedError
+
+    @classmethod
+    def get_meta(cls) -> Meta:
+        """Get the metadata of the operator.
+
+        Returns:
+            Meta: The metadata of the operator.
+        """
+        raise NotImplementedError
+
 
     def execute(self, in_dataset: Dataset, out_dataset: Dataset) -> None:
         """Execute the operator with the given input and output datasets.

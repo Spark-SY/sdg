@@ -5,7 +5,7 @@ import copy
 import shutil
 import pprint
 
-from .data_operator.operator import Operator, OperatorMeta
+from .data_operator.operator import Meta, Operator, OperatorMeta
 from . import data_operator
 from .storage.dataset import Dataset, DataType
 from .task.task_type import TaskType
@@ -25,7 +25,9 @@ def get_operators(data_type, task_type) -> list[Operator]:
 
 def describe_operator(name):
     operator: Operator = registry[name]
-    print('operator name: ', name)
+    meta: Meta = operator.get_meta()
+    print('operator name: ', meta.name)
+    print('operator description: ', meta.description)
     pprint.pprint(operator.get_config())
     print('\n')
 
