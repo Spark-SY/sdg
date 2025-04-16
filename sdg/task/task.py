@@ -10,7 +10,7 @@ Typical usage example:
 from uuid import UUID, uuid4
 
 from .task_type import TaskType
-from ..storage.dataset import Dataset, DataType
+from ..storage.dataset import Dataset, copy_dataset
 from ..data_operator.operator import Operator
 
 
@@ -31,19 +31,17 @@ class Task:
     """
 
     def __init__(self, operators: list[Operator], task_type: TaskType,
-                 data_type: DataType, in_dataset: Dataset):
+                 in_dataset: Dataset):
         """Initializes a task with the given operators, task type, data type
         and input dataset.
 
         Args:
             operators: A list of operators to be applied to the dataset.
             task_type: The type of the task.
-            data_type: The type of data being processed.
             in_dataset: The initial dataset to be processed.
         """
         self.operators: list[Operator] = operators
         self.task_type: TaskType = task_type
-        self.data_type: DataType = data_type
         self.in_dataset: Dataset = in_dataset
         self.id: UUID = uuid4()
         self.out_datasets: dict[str, Dataset] = {}
@@ -53,8 +51,8 @@ class Task:
         """Executes the task by applying the operators to the input dataset."""
         dataset: Dataset = self.in_dataset
         for operator in self.operators:
-            out_dataset = Dataset(str(uuid4()), self.data_type)
-            operator.execute(dataset, out_dataset)
-            self.out_datasets[operator.__class__.__name__] = out_dataset
-            dataset = out_dataset
+            dataset = copy_dataset(dataset, str(uuid4()))
+            print(dataset.dirs[0].data_path)
+            operator.execute(dataset)
+            self.out_datasets[operator.__class__.__name__] = dataset
         self.final_dataset = dataset

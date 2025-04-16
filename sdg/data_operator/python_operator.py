@@ -5,10 +5,12 @@ import black
 import ast
 import random
 from typing import override
+import os
+import pandas as pd
 
 from .operator import Meta
 from .operator import Operator, Field
-from ..storage.dataset import DataType
+from ..storage.dataset import DataType, Dataset
 from ..task.task_type import TaskType
 
 
@@ -61,16 +63,26 @@ class PythonFormattingOperator(Operator):
         )
 
     @override
-    def execute(self, in_dataset, out_dataset) -> None:
-        for name, data in in_dataset:
-            code: str = data.decode('utf-8')
-            code = black.format_str(
-                code,
-                mode=black.FileMode(
-                    line_length=self.line_length,
-                    string_normalization=self.string_normalization,
-                    magic_trailing_comma=self.magic_trailing_comma))
-            out_dataset.write(name, code.encode('utf-8'))
+    def execute(self, dataset: Dataset) -> None:
+        df = pd.read_csv(dataset.meta_path)
+        dir = [dir for dir in dataset.dirs if dir.data_type == DataType.PYTHON][0]
+        files = df[DataType.PYTHON.value].tolist()
+        for file in files:
+            file_path = os.path.join(dir.data_path, file)
+            with open(file_path, 'rb+') as f:
+                code = f.read().decode('utf-8')
+                code = self._inner_execute(code)
+                f.seek(0)
+                f.write(code.encode('utf-8'))
+    
+    def _inner_execute(self, code: str):
+        code = black.format_str(
+            code,
+            mode=black.FileMode(
+                line_length=self.line_length,
+                string_normalization=self.string_normalization,
+                magic_trailing_comma=self.magic_trailing_comma))
+        return code
 
 
 class PythonReorderOperator(Operator):
@@ -118,21 +130,32 @@ class PythonReorderOperator(Operator):
         )
 
     @override
-    def execute(self, in_dataset, out_dataset) -> None:
-        for name, data in in_dataset:
-            code: str = data.decode('utf-8')
-            tree: ast.Module = ast.parse(code)
-            if self.reorder_functions:
-                reorderer = FunctionReorderer()
-                tree = reorderer.visit(tree)
-            if self.reorder_imports:
-                reorderer = ImportReorderer()
-                tree = reorderer.visit(tree)
-            if self.reorder_classes:
-                reorderer = ClassReorderer()
-                tree = reorderer.visit(tree)
-            code = ast.unparse(tree)
-            out_dataset.write(name, code.encode('utf-8'))
+    def execute(self, dataset: Dataset) -> None:
+        df = pd.read_csv(dataset.meta_path)
+        dir = [dir for dir in dataset.dirs if dir.data_type == DataType.PYTHON][0]
+        files = df[DataType.PYTHON.value].tolist()
+        for file in files:
+            file_path = os.path.join(dir.data_path, file)
+            with open(file_path, 'rb+') as f:
+                code = f.read().decode('utf-8')
+                code = self._inner_execute(code)
+                f.seek(0)
+                f.write(code)
+
+    
+    def _inner_execute(self, code: str):
+        tree: ast.Module = ast.parse(code)
+        if self.reorder_functions:
+            reorderer = FunctionReorderer()
+            tree = reorderer.visit(tree)
+        if self.reorder_imports:
+            reorderer = ImportReorderer()
+            tree = reorderer.visit(tree)
+        if self.reorder_classes:
+            reorderer = ClassReorderer()
+            tree = reorderer.visit(tree)
+        code = ast.unparse(tree)
+        return code.encode('utf-8')
 
 
 class FunctionReorderer(ast.NodeTransformer):
@@ -292,15 +315,25 @@ class PythonDocstringInsertOperator(Operator):
         )
 
     @override
-    def execute(self, in_dataset, out_dataset):
-        for name, data in in_dataset:
-            code = data.decode('utf-8')
-            tree = ast.parse(code)
-            inserter = DocstringInserter(self.insert_class_doc,
-                                         self.insert_function_doc)
-            tree = inserter.visit(tree)
-            code = ast.unparse(tree)
-            out_dataset.write(name, code.encode('utf-8'))
+    def execute(self, dataset: Dataset):
+        df = pd.read_csv(dataset.meta_path)
+        dir = [dir for dir in dataset.dirs if dir.data_type == DataType.PYTHON][0]
+        files = df[DataType.PYTHON.value].tolist()
+        for file in files:
+            file_path = os.path.join(dir.data_path, file)
+            with open(file_path, 'rb+') as f:
+                code = f.read().decode('utf-8')
+                code = self._inner_execute(code)
+                f.seek(0)
+                f.write(code.encode('utf-8'))
+    
+    def _inner_execute(self, code: str):
+        tree = ast.parse(code)
+        inserter = DocstringInserter(self.insert_class_doc,
+                                     self.insert_function_doc)
+        tree = inserter.visit(tree)
+        code = ast.unparse(tree)
+        return code
 
 
 class DocstringInserter(ast.NodeTransformer):

@@ -125,14 +125,12 @@ class Operator(metaclass=OperatorMeta):
         raise NotImplementedError
 
 
-    def execute(self, in_dataset: Dataset, out_dataset: Dataset) -> None:
-        """Execute the operator with the given input and output datasets.
+    def execute(self, dataset: Dataset) -> None:
+        """Execute the operator with the given dataset.
 
-        This method processes the input dataset and produces the output dataset
-        with instance configuration.
+        This method processes the dataset with instance configuration.
 
         Args:
-            in_dataset (Dataset): The input dataset.
-            out_dataset (Dataset): The output dataset.
+            dataset (Dataset): The given dataset.
         """
         raise NotImplementedError
