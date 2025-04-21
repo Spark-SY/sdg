@@ -57,5 +57,87 @@ def poc():
     ], TaskType.AUGMENTATION, dataset)
     augmentation_task.run()
 
+def img_aug():
+
+    print('Augmentation operator----------------------------------------------')
+    augmentation_operators = get_operators(DataType.IMAGE,
+                                           TaskType.AUGMENTATION)
+    for operator_name in augmentation_operators:
+        describe_operator(operator_name)
+    print('----------------------------------------------')
+
+    img_dir = Datadir('raw/images', DataType.IMAGE)
+    code_dir = Datadir('raw/echarts', DataType.ECHARTS)
+    raw_dataset: Dataset = Dataset([img_dir, code_dir], 'raw/metadata.csv')
+
+    augmentation_task = Task([
+        registry['ImgToEchartsOperator'](),
+    ], TaskType.AUGMENTATION, raw_dataset)
+    augmentation_task.run()
+
+def mutation_test():
+
+    print('Augmentation operator----------------------------------------------')
+    augmentation_operators = get_operators(DataType.ECHARTS,
+                                           TaskType.AUGMENTATION)
+    for operator_name in augmentation_operators:
+        describe_operator(operator_name)
+    print('----------------------------------------------')
+
+    code_dir = Datadir('raw/echarts', DataType.ECHARTS)
+    raw_dataset: Dataset = Dataset([code_dir], 'raw/metadata.csv')
+
+    augmentation_task = Task([
+        registry['EChartMutationOperator'](),
+    ], TaskType.AUGMENTATION, raw_dataset)
+    augmentation_task.run()
+
+def add_noise_test():
+    print('Augmentation operator----------------------------------------------')
+    augmentation_operators = get_operators(DataType.IMAGE,
+                                           TaskType.AUGMENTATION)
+    for operator_name in augmentation_operators:
+        describe_operator(operator_name)
+    print('----------------------------------------------')
+
+    img_dir = Datadir('raw/images', DataType.IMAGE)
+    raw_dataset: Dataset = Dataset([img_dir], 'raw/metadata.csv')
+
+    augmentation_task = Task([
+        registry['ImageRobustnessEnhancer'](),
+    ], TaskType.AUGMENTATION, raw_dataset)
+    augmentation_task.run()
+
+def total_aug_test():
+
+    img_dir = Datadir('raw/images', DataType.IMAGE)
+    code_dir = Datadir('raw/echarts', DataType.ECHARTS)
+    raw_dataset: Dataset = Dataset([img_dir, code_dir], 'raw/metadata.csv')
+
+    img_to_echarts_task = Task([
+        registry['ImgToEchartsOperator'](
+            api_key = ""
+        ),
+    ], TaskType.AUGMENTATION, raw_dataset)
+    img_to_echarts_task.run()
+    dataset = img_to_echarts_task.final_dataset
+    
+    augmentation_task = Task([
+        registry['EChartMutationOperator'](),
+    ], TaskType.AUGMENTATION, dataset)
+    augmentation_task.run()
+    dataset = augmentation_task.final_dataset
+
+    add_noise_task = Task([
+        registry['ImageRobustnessEnhancer'](),
+    ], TaskType.AUGMENTATION, dataset)
+    add_noise_task.run()
+
+
+
 if __name__ == '__main__':
-    poc()
+    # poc()
+    # img_aug()
+    # mutation_test()
+    # add_noise_test()
+    total_aug_test()
